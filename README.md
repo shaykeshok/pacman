@@ -1,4 +1,4 @@
-<b>pacman-Gis</b>
+<b>Pacman-Gis</b>
 
 Built with: 
 eclipse - The Platform for Open Innovation and Collaboratio 
