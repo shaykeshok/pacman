@@ -8,8 +8,7 @@ Date:
  
 Authors: 
 Shayke Shok 
-Itay Grinblat 
-
+Omer Edut
 Description: 
 
 This system get geography information and make from this data kml files.
