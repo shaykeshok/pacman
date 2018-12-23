@@ -1,4 +1,4 @@
-# GIS
+<b>pacman-Gis</b>
 
 Built with: 
 eclipse - The Platform for Open Innovation and Collaboratio 
@@ -8,7 +8,7 @@ Date:
  
 Authors: 
 Shayke Shok </br>
-Omer Edut
+Omer Edut</br>
 Description: 
 
 This system get geography information and make from this data kml files.
