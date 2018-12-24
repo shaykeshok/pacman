@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 
 import file_format.CsvReader;
 import game.Game;
+import game.Map;
 
 public class MainWindow extends JFrame implements MouseListener {
 	private MenuBar menuBar;
@@ -35,9 +36,13 @@ public class MainWindow extends JFrame implements MouseListener {
 	private Image pacman, fruit, icon;
 	public BufferedImage myImage;
 	private boolean stop;
+	
+	
+	private Map map;
 
 	public MainWindow() {
 		stop = true;
+		map = new Map();
 		try {
 			pacman = ImageIO.read(new File("icons\\pacman.png"));
 			fruit = ImageIO.read(new File("icons\\pineapple.png"));
@@ -92,11 +97,15 @@ public class MainWindow extends JFrame implements MouseListener {
 		helpMenu.add(aboutUsItem);
 		menuBar.add(helpMenu);
 
-		try {
+		
+		
+		
+		
+		/*try {
 			myImage = ImageIO.read(new File("images\\ariel1.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 
@@ -105,8 +114,8 @@ public class MainWindow extends JFrame implements MouseListener {
 	List<int[]> lst = new ArrayList<int[]>();
 
 	public void paint(Graphics g) {
-		g.drawImage(myImage, 0, 0, this);
-
+		//g.drawImage(myImage, 0, 0, this);
+		g.drawImage(map.getMap(), 0, 0, this);
 		if (x != -1 && y != -1) {
 			int r = 20;
 			 x = x - (r / 2);

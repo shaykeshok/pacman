@@ -1,11 +1,58 @@
 package game;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import coords.MyCoords;
 import geom.Point3D;
 
 public class Map {
 	public String picPath;
 	public Point3D rightCornerUp,leftCornerDown,rightCornerDown,leftCornerUp;
 	public static final int WIDTHPIC=1433,HEIGHTPIC=642;
+	
+	
+	private double min_x = 35.202515;
+    private double max_y = 32.105355;
+    private double max_x = 35.212250;
+    private double min_y = 32.101900;
+
+    private double pixel_per_radian_x ;
+    private double pixel_per_radian_y ;
+    
+    private double width_map_in_meters = 950;
+    private double height_map_in_meters = 420;
+    
+    private double pixel_per_meter_x;
+    private double pixel_per_meter_y;
+
+
+    private BufferedImage mapImage;
+    private int mapWidth;
+    private int mapHeight;
+    private MyCoords myCoords;
+	
+	
+	
+    public Map() {
+        try {
+            mapImage = ImageIO.read(new File("images\\ariel1.png"));
+            mapWidth = mapImage.getWidth();
+            mapHeight = mapImage.getHeight();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        myCoords = new MyCoords();
+        pixel_per_radian_x = mapWidth/(max_x-min_x);
+        pixel_per_radian_y = mapHeight/(max_y-min_y);
+        
+        
+        pixel_per_meter_x = mapWidth/width_map_in_meters;
+        pixel_per_meter_y = mapHeight/height_map_in_meters;
+    }
 	
 	public Map(String _picPath) {
 		leftCornerUp = new Point3D( 32.105394,  35.202532, 0);
@@ -22,24 +69,45 @@ public class Map {
 		picPath=_picPath;
 	}
 	
+	
+	public int distanceInPixels(Point3D src, Point3D dst) {
+		MyCoords coords = new MyCoords();
+		Point3D vector = coords.vector3D(src, dst);
+		//double d =  Math.sqrt(Math.pow(vector.x(), 2) + Math.pow(vector.y(), 2) + Math.pow(vector.z(), 2));
+		double dx = vector.x()*pixel_per_meter_x;
+		double dy = vector.y()*pixel_per_meter_y;
+		int distance = (int)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(vector.z(), 2));
+		return distance;
+	}
+	
 
 	//convert pixels point to polar point
-	public static Point3D pixel2Polar(Point3D point) {
-		double ratioHorizontal=leftCornerUp.distance3D(rightCornerUp);
-		double x=point.x()/WIDTHPIC*ratioHorizontal;
-		double ratioVertical=leftCornerUp.distance3D(leftCornerDown);
-		double y=point.y()/HEIGHTPIC*ratioVertical;
-		return new Point3D(x,y,point.z());
+	public Point3D pixel2Polar(Point3D point) {
+		
+		double x = ((point.x()/pixel_per_radian_x) + min_x);
+        double y = -((point.y()/pixel_per_radian_y) - min_y);
+        return new Point3D(x,y,point.z());
+		
+		//double ratioHorizontal=leftCornerUp.distance3D(rightCornerUp);
+		//double x=point.x()/WIDTHPIC*ratioHorizontal;
+		//double ratioVertical=leftCornerUp.distance3D(leftCornerDown);
+		//double y=point.y()/HEIGHTPIC*ratioVertical;
+		//return new Point3D(x,y,point.z());
 	}
 	
 	//convert polar point to pixels point
 	public Point3D polar2Pixel(Point3D point) {
-		
-		return point;
+		double x = mapWidth - ((max_x - point.x()) * pixel_per_radian_x);
+        double y = mapHeight - ((point.y() - min_y) * pixel_per_radian_x);
+		return new Point3D(x, y, point.z());
 		
 	}
 	
-	public static void main(String[] args) {
+	
+	
+	
+	
+	/*public static void main(String[] args) {
 		Point3D p=new Point3D(32.10290524,35.20983303,694);
 		System.out.println("point:"+p);
 
@@ -58,9 +126,9 @@ public class Map {
 		
 		System.out.println("x="+x+ ", y="+y);
 
-	}
+	}*/
 	
-	public Pacman PacPix2Gps(Pacman p) {
+	/*public Pacman PacPix2Gps(Pacman p) {
 		double x1 = 35.2024f; // upper left corner
 		double y1 = 32.1056f;
 		double x2 = 35.2121f; // lower right corner
@@ -88,5 +156,10 @@ public class Map {
 	       //System.out.println(x+","+y);
 	       Packman p1=new Packman(y,x,p.Getpoint().z(),p.Getspeed(),p.GetId(),p.GetRadius());
 	       return p1;
-	}
+	}*/
+	
+	
+	public BufferedImage getMap() {
+        return mapImage;
+    }
 }
