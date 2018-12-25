@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -38,6 +39,7 @@ public class MainWindow extends JFrame implements MouseListener {
 	private Image pacman, fruit, icon;
 	public BufferedImage myImage;
 	private boolean stop;
+	private boolean tt=false;;
 
 	private Map map;
 
@@ -107,6 +109,7 @@ public class MainWindow extends JFrame implements MouseListener {
 	public void paint(Graphics g) {
 		g.drawImage(map.getImg(), 0, 0, this);
 		ImageObserver observer = null;
+		if(tt==false) {
 		if (x != -1 && y != -1) {
 			int r = 20;
 			x = x - (r / 2);
@@ -127,6 +130,11 @@ public class MainWindow extends JFrame implements MouseListener {
 			Point3D pix = map.polar2Pixel(fruitO.getPoint());
 			g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
 		}
+		}
+		else
+			//g.drawLine((int)map.polar2Pixel(game.getFruit().get(0).getPoint()).x(), (int)map.polar2Pixel(game.getFruit().get(0).getPoint()).y(), (int)map.polar2Pixel(game.getPacman().get(0).getPoint()).x(),(int)map.polar2Pixel( game.getPacman().get(0).getPoint()).y());
+			g.setColor(new Color(173,255,47));
+			g.drawLine(140, 140, 240, 500);
 	}
 
 	@Override
@@ -178,6 +186,8 @@ public class MainWindow extends JFrame implements MouseListener {
 			}
 		});
 		saveKmlItem.addActionListener(new ActionListener() {
+			
+
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("save file");
 				MyCoords azm=new MyCoords();
@@ -186,6 +196,7 @@ public class MainWindow extends JFrame implements MouseListener {
 					
 					System.out.println(f);
 				}
+				tt=true;
 				// writeFileDialog();
 				// Path2kml;
 			}
