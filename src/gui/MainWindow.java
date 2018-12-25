@@ -229,9 +229,11 @@ public class MainWindow extends JFrame implements MouseListener {
 				ShortestPath shortestPath=new ShortestPath(game);
 				shortestPath.pathSimulation();
 				repaint();
-				for(Pacman pacmanO:game.getPacman())
-				Path path=new Path();
-				path.pathSofi(pacman, System.currentTimeMillis());
+				for(Pacman pacmanO:game.getPacman()) {
+					Path path = new Path();
+					path.pathSofi(pacman, System.currentTimeMillis());
+				}
+				
 				
 			}
 		});
