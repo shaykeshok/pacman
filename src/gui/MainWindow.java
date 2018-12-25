@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 
 import algorithms.ShortestPath;
 import coords.MyCoords;
+import coords.Path;
 import file_format.CsvReader;
 import game.Fruit;
 import game.Game;
@@ -149,7 +150,6 @@ public class MainWindow extends JFrame implements MouseListener {
 				icon = fruit;
 				Point3D pix = map.polar2Pixel(fruitO.getPoint());
 				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-				//g.drawOval((int)pix.x(), (int)pix.y(), 20, 20);
 			}
 			simulator=false;
 		}	
@@ -192,6 +192,7 @@ public class MainWindow extends JFrame implements MouseListener {
 				System.out.println("open file");
 				try {
 					readFileDialog();
+					repaint();
 				} catch (FileNotFoundException e1) {
 					System.out.println("File not found");
 				}
@@ -206,21 +207,14 @@ public class MainWindow extends JFrame implements MouseListener {
 		saveKmlItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("save file");
-				MyCoords azm = new MyCoords();
-				double[] d = azm.azimuth_elevation_dist(game.getFruit().get(0).getPoint(),
-						game.getPacman().get(0).getPoint());
-				for (double f : d) {
-
-					System.out.println(f);
-				}
+				System.out.println("save file to kml..");
 				// writeFileDialog();
 				// Path2kml;
 			}
 		});
 		simulationItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("simulation start");
+				System.out.println("start simulation..");
 				simulator=true;
 				ShortestPath shortestPath=new ShortestPath(game);
 				shortestPath.pathSimulation();
@@ -228,6 +222,19 @@ public class MainWindow extends JFrame implements MouseListener {
 			}
 		});
 		
+		playGameItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("start game..");
+				simulator=true;
+				ShortestPath shortestPath=new ShortestPath(game);
+				shortestPath.pathSimulation();
+				repaint();
+				for(Pacman pacmanO:game.getPacman())
+				Path path=new Path();
+				path.pathSofi(pacman, System.currentTimeMillis());
+				
+			}
+		});
 		clearItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("clear map");

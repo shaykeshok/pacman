@@ -32,5 +32,7 @@ public class Fruit implements ElementGame{
 	public String toString() {
 		return "f,"+id + "," + mikum.x()+","+mikum.y()+","+mikum.z() + "," + weight;
 	}
-
+	public String stringToFile() {
+		return "f,"+id + "," + mikum.y()+","+mikum.x()+","+mikum.z() + "," + weight;
+	}
 }

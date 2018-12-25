@@ -33,11 +33,11 @@ public class CsvWriter {
 		sb.append(header);
 		for (Pacman pacman : PacmanSet) {
 			sb.append('\n');
-			sb.append(pacman.toString());
+			sb.append(pacman.stringToFile());
 		}
 		for (Fruit fruit : FruitSet) {
 			sb.append('\n');
-			sb.append(fruit.toString());
+			sb.append(fruit.stringToFile());
 		}
 
 		pw.write(sb.toString());

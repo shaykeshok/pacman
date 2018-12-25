@@ -64,6 +64,10 @@ public class Pacman implements ElementGame {
 	public String toString() {
 		return "p,"+id + "," + mikum.x()+","+mikum.y()+","+mikum.z() + "," + speed + "," + radius;
 	}
+	
+	public String stringToFile() {
+		return "p,"+id + "," + mikum.y()+","+mikum.x()+","+mikum.z() + "," + speed + "," + radius;
+	}
 
 	public void addPath(Point3D[] points) {		
 		pathPacman.add(points);
