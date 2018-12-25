@@ -18,13 +18,14 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import algorithms.ShortestPath;
-import coords.MyCoords;
 import coords.Path;
 import file_format.CsvReader;
 import game.Fruit;
@@ -42,10 +43,11 @@ public class MainWindow extends JFrame implements MouseListener {
 	private Image pacman, fruit, icon;
 	public BufferedImage myImage;
 	private boolean stop;
-
+	private List<Object[]> pathSofi;
 	private Map map;
 
 	public MainWindow() {
+		pathSofi = new ArrayList<Object[]>();
 		game = new Game();
 		stop = true;
 		map = new Map();
@@ -107,11 +109,14 @@ public class MainWindow extends JFrame implements MouseListener {
 
 	int x = -1;
 	int y = -1;
-	private boolean simulator = false;;
+	private boolean simulator = false;
+	private boolean startGame=false;
+	private long time;
 
 	public void paint(Graphics g) {
 		g.drawImage(map.getImg(), 0, 0, this);
 		ImageObserver observer = null;
+		if(startGame==false) {
 		if (simulator == false) {
 			if (x != -1 && y != -1) {
 				int r = 30;
@@ -119,9 +124,9 @@ public class MainWindow extends JFrame implements MouseListener {
 				y = y - (r / 2);
 
 				if (icon == pacman)
-					game.add(new Pacman(game.getBigIdPacman()+1, map.pixel2Polar(x, y), 1, 1, null));
+					game.add(new Pacman(game.getBigIdPacman() + 1, map.pixel2Polar(x, y), 1, 1, null));
 				else
-					game.add(new Fruit(game.getBigIdFruit()+1, map.pixel2Polar(x, y), 1));
+					game.add(new Fruit(game.getBigIdFruit() + 1, map.pixel2Polar(x, y), 1));
 			}
 			for (Pacman pacmanO : game.getPacman()) {
 				icon = pacman;
@@ -138,7 +143,8 @@ public class MainWindow extends JFrame implements MouseListener {
 				icon = pacman;
 				Point3D pix = map.polar2Pixel(pacmanO.getPoint());
 				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-				g.setColor(new Color(((int)(Math.random() * (256))),(int)(Math.random() * (256)),(int)(Math.random() * (256))));
+				g.setColor(new Color(((int) (Math.random() * (256))), (int) (Math.random() * (256)),
+						(int) (Math.random() * (256))));
 				List<Point3D[]> points = pacmanO.getPath();
 				for (Point3D[] line : points) {
 					Point3D start = map.polar2Pixel(line[0]);
@@ -151,10 +157,33 @@ public class MainWindow extends JFrame implements MouseListener {
 				Point3D pix = map.polar2Pixel(fruitO.getPoint());
 				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
 			}
-			simulator=false;
-		}	
+			simulator = false;
+		}
+		}else {
+			for (Object[] objects : pathSofi) {
+				if((long)objects[0]==time) {
+					icon = pacman;
+					Point3D pix = map.polar2Pixel((Point3D)objects[1]);
+					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				}else {
+					for (Fruit fruitO : game.getFruit()) {
+						icon = fruit;
+						Point3D pix = map.polar2Pixel(fruitO.getPoint());
+						g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+					}
+					time+=1000;
+				}
+			}
+			startGame=false;
+		}
 	}
+	class TimeComperator implements Comparator<Object[]> {
 
+		@Override
+		public int compare(Object[] o1, Object[] o2) {
+			return (int) ((long)o1[0] - (long)o2[0]);
+		}
+	}
 	@Override
 	public void mouseClicked(MouseEvent arg) {
 		if (!stop) {
@@ -215,32 +244,36 @@ public class MainWindow extends JFrame implements MouseListener {
 		simulationItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("start simulation..");
-				simulator=true;
-				ShortestPath shortestPath=new ShortestPath(game);
+				simulator = true;
+				ShortestPath shortestPath = new ShortestPath(game);
 				shortestPath.pathSimulation();
 				repaint();
 			}
 		});
-		
+
 		playGameItem.addActionListener(new ActionListener() {
+			
+
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("start game..");
-				simulator=true;
-				ShortestPath shortestPath=new ShortestPath(game);
+				simulator = true;
+				ShortestPath shortestPath = new ShortestPath(game);
 				shortestPath.pathSimulation();
 				repaint();
-				for(Pacman pacmanO:game.getPacman()) {
+				time = System.currentTimeMillis();
+				for (Pacman pacmanO : game.getPacman()) {
 					Path path = new Path();
-					path.pathSofi(pacman, System.currentTimeMillis());
+					pathSofi.addAll(path.pathSofi(pacmanO, time));
 				}
-				
-				
+				pathSofi.sort(new TimeComperator());
+				startGame=true;
 			}
 		});
 		clearItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("clear map");
 				game.clear();
+				pathSofi.clear();
 				x = y = -1;
 				icon = null;
 				stop = true;
