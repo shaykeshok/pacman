@@ -82,17 +82,13 @@ public class Map {
 	
 
 	//convert pixels point to polar point
-	public Point3D pixel2Polar(Point3D point) {
+	public Point3D pixel2Polar(int x,int y) {
 		
-		double x = ((point.x()/pixel_per_radian_x) + min_x);
-        double y = max_y - (point.y() / pixel_per_radian_y);
-        return new Point3D(x,y,point.z());
+		double xNew = ((x/pixel_per_radian_x) + min_x);
+        double yNew = max_y - (y / pixel_per_radian_y);
+        return new Point3D(xNew,yNew);
 		
-		//double ratioHorizontal=leftCornerUp.distance3D(rightCornerUp);
-		//double x=point.x()/WIDTHPIC*ratioHorizontal;
-		//double ratioVertical=leftCornerUp.distance3D(leftCornerDown);
-		//double y=point.y()/HEIGHTPIC*ratioVertical;
-		//return new Point3D(x,y,point.z());
+		
 	}
 	
 	//convert polar point to pixels point
@@ -109,64 +105,57 @@ public class Map {
             return (int)n;
         }
     }
-	
-	
-	
-	
-	
-	/*public static void main(String[] args) {
-		Point3D p=new Point3D(32.10290524,35.20983303,694);
-		System.out.println("point:"+p);
 
-		
-		Point3D leftCornerUp = new Point3D( 32.105394,  35.202532, 0);
-		Point3D rightCornerUp = new Point3D( 32.105444,  35.212496, 0);
-		Point3D leftCornerDown = new Point3D( 32.101899,  35.202447, 0);
-		Point3D rightCornerDown = new Point3D( 32.101899,  35.212496, 0);
-		
-		double ratioHorizontal=leftCornerUp.distance3D(rightCornerUp);
-		System.out.println(ratioHorizontal);
-		double x=1149/1433*ratioHorizontal;
-		System.out.println(Point3D.d2r(x));
-		double ratioVertical=leftCornerUp.distance3D(leftCornerDown);
-		double y=460/HEIGHTPIC*ratioVertical;
-		
-		System.out.println("x="+x+ ", y="+y);
-
-	}*/
-	
-	/*public Pacman PacPix2Gps(Pacman p) {
-		double x1 = 35.2024f; // upper left corner
-		double y1 = 32.1056f;
-		double x2 = 35.2121f; // lower right corner
-		double y2 = 32.1019f;
-		int mapWidth=1433;
-		int mapHeight=642;
-		double mapLongitudeStart=32.1056f;
-		double mapLatitudeStart=35.2024f;
-		double mapLongitudeEnd=32.1019f;
-		double mapLatitudeEnd=35.2121f;
-		double mapLongitude=mapLongitudeEnd-mapLongitudeStart;
-		double mapLatitude=mapLatitudeStart-mapLatitudeEnd;
-		double xPIX=p.Getpoint().x();
-		double yPIX=p.Getpoint().y();
-		   double x=xPIX*mapLongitude ;//;
-		   //System.out.println(z);
-		   x=x/(mapWidth);
-		  // System.out.println(z);
-		   x=x +mapLongitudeStart;
-	       //System.out.println(x);
-	       double y=yPIX*mapLatitude;
-	       y=y/mapHeight;
-	       y=y-mapLatitudeStart;
-	       y=y*(-1);
-	       //System.out.println(x+","+y);
-	       Packman p1=new Packman(y,x,p.Getpoint().z(),p.Getspeed(),p.GetId(),p.GetRadius());
-	       return p1;
-	}*/
-	
-	
-	public BufferedImage getMap() {
+	public BufferedImage getImg() {
         return mapImage;
     }
+
+	/**
+	 * Get the angle between two points on screen (pixels), in degrees. <br>
+	 * Note: Calculating Rescaled / non-original / non-Raw points. angle might be different with different screen sizes. unless
+	 * given a Raw points as arguments.<br>
+	 * the angle is in degrees and in clockwise <br>
+	 * Directly Upwards = 0 degrees. <br>
+	 * Directly on the Right = 90 degrees. <br>
+	 * Directly Downwards = 180 degrees. <br>
+	 * Directly on the Left = 270 degrees 
+	 * @param p1 - point in pixels
+	 * @param p2 - point in pixels
+	 * @return angle in degrees
+	 */
+	public double getAngle(Point3D p1, Point3D p2) {
+		double deltaX, deltaY, angle;
+		deltaX = p2.x()-p1.x();
+		deltaY = p2.y()-p1.y();
+
+		angle = Math.toDegrees(Math.atan2(deltaX, deltaY));
+		return (angle < 0)? angle+360 : angle;
+	}
+	
+	/**
+	 * Get the angle between two points on screen (RAW pixels), in degrees. <br>
+	 * Note: calculating RAW points. <br>
+	 * First the function reverting the points into a RAW-pixel points,
+	 * if Raw pixel points are passed as argument, the function would still try to revert the point to RAW
+	 * as it doesn't recognize which is RAW and which isn't, please provide only Non-RAW pixel coordinates.
+	 * @param p1 - point in pixels
+	 * @param p2 - point in pixels
+	 * @return angle in degrees
+	 */
+	public double getAngleRaw(Point3D p1, Point3D p2) {
+		double scaleFactorX=1, scaleFactorY=1;
+		double deltaX, deltaY, angle;
+		deltaX = (p2.x()-p1.x())/scaleFactorX;
+		deltaY = (p2.y()-p1.y())/scaleFactorY;
+
+		angle = Math.toDegrees(Math.atan2(deltaX, deltaY));
+		return (angle < 0)? angle+360 : angle;
+	}
+	/*
+	public static void main(String[] args) {
+		Point3D p=new Point3D(35.2035022,32.1045513,10);
+		Map map=new Map();
+		System.out.println(map.polar2Pixel(p));
+	}
+	*/
 }

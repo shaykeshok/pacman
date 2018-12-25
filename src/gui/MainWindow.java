@@ -17,15 +17,17 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import coords.MyCoords;
 import file_format.CsvReader;
+import game.Fruit;
 import game.Game;
 import game.Map;
+import game.Pacman;
+import geom.Point3D;
 
 public class MainWindow extends JFrame implements MouseListener {
 	private MenuBar menuBar;
@@ -36,11 +38,11 @@ public class MainWindow extends JFrame implements MouseListener {
 	private Image pacman, fruit, icon;
 	public BufferedImage myImage;
 	private boolean stop;
-	
-	
+
 	private Map map;
 
 	public MainWindow() {
+		game = new Game();
 		stop = true;
 		map = new Map();
 		try {
@@ -97,53 +99,33 @@ public class MainWindow extends JFrame implements MouseListener {
 		helpMenu.add(aboutUsItem);
 		menuBar.add(helpMenu);
 
-		
-		
-		
-		
-		/*try {
-			myImage = ImageIO.read(new File("images\\ariel1.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-
 	}
 
 	int x = -1;
 	int y = -1;
-	List<int[]> lst = new ArrayList<int[]>();
 
 	public void paint(Graphics g) {
-		//g.drawImage(myImage, 0, 0, this);
-		g.drawImage(map.getMap(), 0, 0, this);
+		g.drawImage(map.getImg(), 0, 0, this);
+		ImageObserver observer = null;
 		if (x != -1 && y != -1) {
 			int r = 20;
-			 x = x - (r / 2);
-			 y = y - (r / 2);
-			int sug = 0;
-			ImageObserver observer = null;
+			x = x - (r / 2);
+			y = y - (r / 2);
+
 			if (icon == pacman)
-				sug = 1;
+				game.add(new Pacman(game.getBigIdPacman(), map.pixel2Polar(x, y), 1, 1, null));
 			else
-				sug = 0;
-			int[] arr = { x, y, sug };
-			lst.add(arr);
-			
-			/*
-			String str;
-			if(icon==pacman)
-				str="pacman";
-			else
-				str="fruit";
-			ObjectParam objectParam=new ObjectParam(x,y,str);
-			*/
-			for (int[] a : lst) {
-				if (a[2] == 1)
-					icon = pacman;
-				else
-					icon = fruit;
-				g.drawImage(icon, a[0], a[1], 30, 30, observer);
-			}
+				game.add(new Fruit(game.getBigIdFruit(), map.pixel2Polar(x, y), 1));
+		}
+		for (Pacman pacmanO : game.getPacman()) {
+			icon = pacman;
+			Point3D pix = map.polar2Pixel(pacmanO.getPoint());
+			g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+		}
+		for (Fruit fruitO : game.getFruit()) {
+			icon = fruit;
+			Point3D pix = map.polar2Pixel(fruitO.getPoint());
+			g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
 		}
 	}
 
@@ -198,8 +180,24 @@ public class MainWindow extends JFrame implements MouseListener {
 		saveKmlItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("save file");
-				//writeFileDialog();
-				//Path2kml;
+				MyCoords azm=new MyCoords();
+				double[] d=azm.azimuth_elevation_dist(game.getFruit().get(0).getPoint(), game.getPacman().get(0).getPoint());
+				for (double f : d) {
+					
+					System.out.println(f);
+				}
+				// writeFileDialog();
+				// Path2kml;
+			}
+		});
+		clearItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("clear map");
+				game.clear();
+				x = y = -1;
+				icon = null;
+				stop = true;
+				repaint();
 			}
 		});
 	}
@@ -223,6 +221,7 @@ public class MainWindow extends JFrame implements MouseListener {
 			CsvReader csvReader = new CsvReader();
 			csvReader.init(folder + fileName, ",");
 			game = csvReader.read(1);
+			repaint();
 
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -251,26 +250,18 @@ public class MainWindow extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		System.out.println("mouse entered");
-
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
