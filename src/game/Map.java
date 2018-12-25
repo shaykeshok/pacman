@@ -13,47 +13,54 @@ public class Map {
 	public String picPath;
 	public Point3D rightCornerUp,leftCornerDown,rightCornerDown,leftCornerUp;
 	public static final int WIDTHPIC=1433,HEIGHTPIC=642;
-	
-	
-	 private double max_x = 35.212400;
-	    private double max_y = 32.105740;
-	    private double min_x = 35.202350;
-	    private double min_y = 32.101900;
-
-	    private double pixel_per_radian_x ;
-	    private double pixel_per_radian_y ;
 
 
-	    private double width_map_in_meters = 943;
-	    private double height_map_in_meters = 427;
-	    private double pixel_per_meter_x;
-	    private double pixel_per_meter_y;
+	private double max_x = 35.212400;
+	private double max_y = 32.105740;
+	private double min_x = 35.202350;
+	private double min_y = 32.101900;
+
+	private double pixel_per_radian_x ;
+	private double pixel_per_radian_y ;
 
 
-    private BufferedImage mapImage;
-    private int mapWidth;
-    private int mapHeight;
-    private MyCoords myCoords;
-	
-	
-	
-    public Map() {
-        try {
-            mapImage = ImageIO.read(new File("images\\ariel1.png"));
-            mapWidth = mapImage.getWidth();
-            mapHeight = mapImage.getHeight();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        myCoords = new MyCoords();
-        pixel_per_radian_x = mapWidth/(max_x-min_x);
-        pixel_per_radian_y = mapHeight/(max_y-min_y);
-        
-        
-        pixel_per_meter_x = mapWidth/width_map_in_meters;
-        pixel_per_meter_y = mapHeight/height_map_in_meters;
-    }
-	
+	private double width_map_in_meters = 943;
+	private double height_map_in_meters = 427;
+	private double pixel_per_meter_x;
+	private double pixel_per_meter_y;
+
+
+	private BufferedImage mapImage;
+	private int mapWidth;
+	private int mapHeight;
+	private MyCoords myCoords;
+
+
+
+	/**
+	 * Create Map object
+	 */
+	public Map() {
+		try {
+			mapImage = ImageIO.read(new File("images\\ariel1.png"));
+			mapWidth = mapImage.getWidth();
+			mapHeight = mapImage.getHeight();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		myCoords = new MyCoords();
+		pixel_per_radian_x = mapWidth/(max_x-min_x);
+		pixel_per_radian_y = mapHeight/(max_y-min_y);
+
+
+		pixel_per_meter_x = mapWidth/width_map_in_meters;
+		pixel_per_meter_y = mapHeight/height_map_in_meters;
+	}
+
+	/**
+     * Create Map object by given string path to map image
+     * @param _picPath path of image
+     */
 	public Map(String _picPath) {
 		leftCornerUp = new Point3D( 32.105394,  35.202532, 0);
 		rightCornerUp = new Point3D( 32.105444,  35.212496, 0);
@@ -61,6 +68,15 @@ public class Map {
 		rightCornerDown = new Point3D( 32.101899,  35.212496, 0);
 		picPath=_picPath;
 	}
+	
+	/**
+	 * Create Map object by
+	 * @param _rightCornerUp limit of the map
+	 * @param _leftCornerDown limit of the map
+	 * @param _leftCornerUp limit of the map
+	 * @param _rightCornerDown limit of the map
+	 * @param _picPath path of image
+	 */
 	public Map(Point3D _rightCornerUp,Point3D _leftCornerDown,Point3D _leftCornerUp,Point3D _rightCornerDown,String _picPath) {
 		rightCornerUp=_rightCornerUp;
 		leftCornerDown=_leftCornerDown;
@@ -68,8 +84,14 @@ public class Map {
 		rightCornerDown=_rightCornerDown;
 		picPath=_picPath;
 	}
-	
-	
+
+
+	/**
+	 * This method convert distance between 2 points to distans in pixels 
+	 * @param src point
+	 * @param dst point
+	 * @return the distance between 2 points in pixels
+	 */
 	public int distanceInPixels(Point3D src, Point3D dst) {
 		MyCoords coords = new MyCoords();
 		Point3D vector = coords.vector3D(src, dst);
@@ -79,36 +101,52 @@ public class Map {
 		int distance = (int)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(vector.z(), 2));
 		return distance;
 	}
-	
 
-	//convert pixels point to polar point
+
+	/**
+	 * This method convert pixels point to polar point
+	 * @param point to convert
+	 * @return the given point in polar
+	 */
 	public Point3D pixel2Polar(int x,int y) {
-		
+
 		double xNew = ((x/pixel_per_radian_x) + min_x);
-        double yNew = max_y - (y / pixel_per_radian_y);
-        return new Point3D(xNew,yNew);
-		
-		
+		double yNew = max_y - (y / pixel_per_radian_y);
+		return new Point3D(xNew,yNew);
+
+
 	}
-	
-	//convert polar point to pixels point
+
+	/**
+	 * This method convert polar point to pixels point
+	 * @param point to convert
+	 * @return the given point in pixels
+	 */
 	public Point3D polar2Pixel(Point3D point) {
 		double x = Math.abs(point.x() - min_x) * pixel_per_radian_x;
-        double y = Math.abs(max_y - point.y()) * pixel_per_radian_y;
-        return new Point3D(roundNumber(x), roundNumber(y), point.z());
+		double y = Math.abs(max_y - point.y()) * pixel_per_radian_y;
+		return new Point3D(roundNumber(x), roundNumber(y), point.z());
 	}
-	
-	private int roundNumber(double n){
-        if ((n - (int)n) > 0.5){
-            return (int)n + 1;
-        }else {
-            return (int)n;
-        }
-    }
 
+	/**
+	 * This method rounded the pixel up or down
+	 * @param n number to rounded
+	 * @return number rounded
+	 */
+	private int roundNumber(double n){
+		if ((n - (int)n) > 0.5){
+			return (int)n + 1;
+		}else {
+			return (int)n;
+		}
+	}
+
+	/**
+	 * @return the map image
+	 */
 	public BufferedImage getImg() {
-        return mapImage;
-    }
+		return mapImage;
+	}
 
 	/**
 	 * Get the angle between two points on screen (pixels), in degrees. <br>
@@ -131,7 +169,7 @@ public class Map {
 		angle = Math.toDegrees(Math.atan2(deltaX, deltaY));
 		return (angle < 0)? angle+360 : angle;
 	}
-	
+
 	/**
 	 * Get the angle between two points on screen (RAW pixels), in degrees. <br>
 	 * Note: calculating RAW points. <br>
@@ -157,5 +195,5 @@ public class Map {
 		Map map=new Map();
 		System.out.println(map.polar2Pixel(p));
 	}
-	*/
+	 */
 }

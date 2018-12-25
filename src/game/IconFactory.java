@@ -11,6 +11,11 @@ import javax.imageio.ImageIO;
 public class IconFactory {
 	private static HashMap<String, Image> icons = new HashMap<>();
 	
+	/**
+	 * This function create image by path icon
+	 * @param iconPath the path of the icon
+	 * @return the image of the icon
+	 */
 	public static Image getIcon(String iconPath) {
 		Image icon = icons.get(iconPath);
 		

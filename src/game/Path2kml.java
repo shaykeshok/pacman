@@ -13,14 +13,22 @@ public class Path2kml {
 	private List<Pacman> pacmanLst;
 	private List<Fruit> fruitLst;
 
+	/**
+	 * Create Path2kml object to save game data in kml format
+	 * @param game to save
+	 * @param _pathWay 
+	 * @param _pathArr
+	 */
 	public Path2kml(Game game, List<Point3D> _pathWay, List<double[]> _pathArr) {
-
 		pathWay = new ArrayList<double[]>();
 		pacmanLst = game.getPacman();
 		fruitLst = game.getFruit();
 		pathArr = _pathArr;
 	}
 
+	/**
+	 * This method create the kml file
+	 */
 	public void createPathSofi() {
 		double[] arrToPath = new double[5];
 		double color=0;
@@ -46,8 +54,7 @@ public class Path2kml {
 				arrToPath[4] = point.z();
 
 			}
-			pathWay.add(arrToPath);
-			
+			pathWay.add(arrToPath);	
 		}
 		
 		
@@ -58,6 +65,9 @@ public class Path2kml {
 
 	}
 
+	/**
+	 * This method write the kml file
+	 */
 	private void makeKml() {
 		KmlWriter kmlWriter=new KmlWriter();
 		kmlWriter.addMarksFromList(pathWay);
