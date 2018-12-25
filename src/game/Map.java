@@ -15,19 +15,19 @@ public class Map {
 	public static final int WIDTHPIC=1433,HEIGHTPIC=642;
 	
 	
-	private double min_x = 35.202515;
-    private double max_y = 32.105355;
-    private double max_x = 35.212250;
-    private double min_y = 32.101900;
+	 private double max_x = 35.212400;
+	    private double max_y = 32.105740;
+	    private double min_x = 35.202350;
+	    private double min_y = 32.101900;
 
-    private double pixel_per_radian_x ;
-    private double pixel_per_radian_y ;
-    
-    private double width_map_in_meters = 950;
-    private double height_map_in_meters = 420;
-    
-    private double pixel_per_meter_x;
-    private double pixel_per_meter_y;
+	    private double pixel_per_radian_x ;
+	    private double pixel_per_radian_y ;
+
+
+	    private double width_map_in_meters = 943;
+	    private double height_map_in_meters = 427;
+	    private double pixel_per_meter_x;
+	    private double pixel_per_meter_y;
 
 
     private BufferedImage mapImage;
@@ -73,7 +73,7 @@ public class Map {
 	public int distanceInPixels(Point3D src, Point3D dst) {
 		MyCoords coords = new MyCoords();
 		Point3D vector = coords.vector3D(src, dst);
-		//double d =  Math.sqrt(Math.pow(vector.x(), 2) + Math.pow(vector.y(), 2) + Math.pow(vector.z(), 2));
+		double d =  Math.sqrt(Math.pow(vector.x(), 2) + Math.pow(vector.y(), 2) + Math.pow(vector.z(), 2));
 		double dx = vector.x()*pixel_per_meter_x;
 		double dy = vector.y()*pixel_per_meter_y;
 		int distance = (int)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(vector.z(), 2));
@@ -85,7 +85,7 @@ public class Map {
 	public Point3D pixel2Polar(Point3D point) {
 		
 		double x = ((point.x()/pixel_per_radian_x) + min_x);
-        double y = -((point.y()/pixel_per_radian_y) - min_y);
+        double y = max_y - (point.y() / pixel_per_radian_y);
         return new Point3D(x,y,point.z());
 		
 		//double ratioHorizontal=leftCornerUp.distance3D(rightCornerUp);
@@ -97,11 +97,18 @@ public class Map {
 	
 	//convert polar point to pixels point
 	public Point3D polar2Pixel(Point3D point) {
-		double x = mapWidth - ((max_x - point.x()) * pixel_per_radian_x);
-        double y = mapHeight - ((point.y() - min_y) * pixel_per_radian_x);
-		return new Point3D(x, y, point.z());
-		
+		double x = Math.abs(point.x() - min_x) * pixel_per_radian_x;
+        double y = Math.abs(max_y - point.y()) * pixel_per_radian_y;
+        return new Point3D(roundNumber(x), roundNumber(y), point.z());
 	}
+	
+	private int roundNumber(double n){
+        if ((n - (int)n) > 0.5){
+            return (int)n + 1;
+        }else {
+            return (int)n;
+        }
+    }
 	
 	
 	
