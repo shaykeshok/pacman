@@ -10,7 +10,7 @@ import coords.MyCoords;
 import geom.Point3D;
 /**
  * Junit to test MyCoords class
- * @author Shayke Shok and Itay Grinblat
+ * @author Shayke Shok and Omer Edut
  */
 class Test_MyCoords {
 	MyCoords coords=new MyCoords();

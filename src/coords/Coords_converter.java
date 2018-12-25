@@ -7,7 +7,7 @@ import geom.Point3D;
  * 1. The 3D vector between two lat,lon, alt points 
  * 2. Adding a 3D vector in meters to a global point.
  * 3. convert a 3D vector from meters to polar coordinates
- * @author Shayke Shok and Itay Grinblat
+ * @author Shayke Shok and Omer Edut
  *
  */
 public interface Coords_converter {

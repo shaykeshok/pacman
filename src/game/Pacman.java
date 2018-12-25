@@ -12,7 +12,7 @@ public class Pacman implements ElementGame {
 	private int radius;
 	private Object orientation;
 	private final static String ICON="icons\\pacman.png";
-	private double color;
+	private double color,meterSum=0;
 	private List<Point3D[]> pathPacman;
 	
 	public Pacman(int _id,Point3D _startPoint,int _speed,int _radius,Object _orientation) {
@@ -37,7 +37,13 @@ public class Pacman implements ElementGame {
 		return attribute;
 	}
 	public double getColor() {
-		return 0;
+		return color;
+	}
+	public List<Point3D[]> getPath() {
+		return pathPacman;
+	}
+	public double getmeterSum() {
+		return meterSum;
 	}
 	
 	/***************************Setters******************************/
@@ -50,6 +56,10 @@ public class Pacman implements ElementGame {
 	public void setPoint(Point3D point) {
 		mikum=point;
 	}
+	public void setMeterSum(double meters) {
+		meterSum+=meters;
+	}
+	
 	@Override
 	public String toString() {
 		return "p,"+id + "," + mikum.x()+","+mikum.y()+","+mikum.z() + "," + speed + "," + radius;
@@ -58,6 +68,7 @@ public class Pacman implements ElementGame {
 	public void addPath(Point3D[] points) {		
 		pathPacman.add(points);
 	}
+
 
 	
 

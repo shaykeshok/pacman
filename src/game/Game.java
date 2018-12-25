@@ -10,8 +10,8 @@ import geom.Point3D;
 public class Game {
 	private List<Pacman> pacmanLst;
 	private List<Fruit> fruitLst;
-	private int maxIdPacman;
-	private int maxIdFruit;
+	private int maxIdPacman=-1;
+	private int maxIdFruit=-1;
 
 	/************************** constructors *************************/
 	public Game() {

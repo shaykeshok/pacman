@@ -18,10 +18,12 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import algorithms.ShortestPath;
 import coords.MyCoords;
 import file_format.CsvReader;
 import game.Fruit;
@@ -39,7 +41,6 @@ public class MainWindow extends JFrame implements MouseListener {
 	private Image pacman, fruit, icon;
 	public BufferedImage myImage;
 	private boolean stop;
-	private boolean tt=false;;
 
 	private Map map;
 
@@ -105,36 +106,53 @@ public class MainWindow extends JFrame implements MouseListener {
 
 	int x = -1;
 	int y = -1;
+	private boolean simulator = false;;
 
 	public void paint(Graphics g) {
 		g.drawImage(map.getImg(), 0, 0, this);
 		ImageObserver observer = null;
-		if(tt==false) {
-		if (x != -1 && y != -1) {
-			int r = 20;
-			x = x - (r / 2);
-			y = y - (r / 2);
+		if (simulator == false) {
+			if (x != -1 && y != -1) {
+				int r = 30;
+				x = x - (r / 2);
+				y = y - (r / 2);
 
-			if (icon == pacman)
-				game.add(new Pacman(game.getBigIdPacman(), map.pixel2Polar(x, y), 1, 1, null));
-			else
-				game.add(new Fruit(game.getBigIdFruit(), map.pixel2Polar(x, y), 1));
-		}
-		for (Pacman pacmanO : game.getPacman()) {
-			icon = pacman;
-			Point3D pix = map.polar2Pixel(pacmanO.getPoint());
-			g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-		}
-		for (Fruit fruitO : game.getFruit()) {
-			icon = fruit;
-			Point3D pix = map.polar2Pixel(fruitO.getPoint());
-			g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-		}
-		}
-		else
-			//g.drawLine((int)map.polar2Pixel(game.getFruit().get(0).getPoint()).x(), (int)map.polar2Pixel(game.getFruit().get(0).getPoint()).y(), (int)map.polar2Pixel(game.getPacman().get(0).getPoint()).x(),(int)map.polar2Pixel( game.getPacman().get(0).getPoint()).y());
-			g.setColor(new Color(173,255,47));
-			g.drawLine(140, 140, 240, 500);
+				if (icon == pacman)
+					game.add(new Pacman(game.getBigIdPacman()+1, map.pixel2Polar(x, y), 1, 1, null));
+				else
+					game.add(new Fruit(game.getBigIdFruit()+1, map.pixel2Polar(x, y), 1));
+			}
+			for (Pacman pacmanO : game.getPacman()) {
+				icon = pacman;
+				Point3D pix = map.polar2Pixel(pacmanO.getPoint());
+				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+			}
+			for (Fruit fruitO : game.getFruit()) {
+				icon = fruit;
+				Point3D pix = map.polar2Pixel(fruitO.getPoint());
+				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+			}
+		} else {
+			for (Pacman pacmanO : game.getPacman()) {
+				icon = pacman;
+				Point3D pix = map.polar2Pixel(pacmanO.getPoint());
+				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				g.setColor(new Color(((int)(Math.random() * (256))),(int)(Math.random() * (256)),(int)(Math.random() * (256))));
+				List<Point3D[]> points = pacmanO.getPath();
+				for (Point3D[] line : points) {
+					Point3D start = map.polar2Pixel(line[0]);
+					Point3D end = map.polar2Pixel(line[1]);
+					g.drawLine((int) start.x(), (int) start.y(), (int) end.x(), (int) end.y());
+				}
+			}
+			for (Fruit fruitO : game.getFruit()) {
+				icon = fruit;
+				Point3D pix = map.polar2Pixel(fruitO.getPoint());
+				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				//g.drawOval((int)pix.x(), (int)pix.y(), 20, 20);
+			}
+			simulator=false;
+		}	
 	}
 
 	@Override
@@ -186,21 +204,30 @@ public class MainWindow extends JFrame implements MouseListener {
 			}
 		});
 		saveKmlItem.addActionListener(new ActionListener() {
-			
 
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("save file");
-				MyCoords azm=new MyCoords();
-				double[] d=azm.azimuth_elevation_dist(game.getFruit().get(0).getPoint(), game.getPacman().get(0).getPoint());
+				MyCoords azm = new MyCoords();
+				double[] d = azm.azimuth_elevation_dist(game.getFruit().get(0).getPoint(),
+						game.getPacman().get(0).getPoint());
 				for (double f : d) {
-					
+
 					System.out.println(f);
 				}
-				tt=true;
 				// writeFileDialog();
 				// Path2kml;
 			}
 		});
+		simulationItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("simulation start");
+				simulator=true;
+				ShortestPath shortestPath=new ShortestPath(game);
+				shortestPath.pathSimulation();
+				repaint();
+			}
+		});
+		
 		clearItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("clear map");

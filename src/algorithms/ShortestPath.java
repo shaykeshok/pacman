@@ -6,6 +6,7 @@ import java.util.List;
 import game.ElementGame;
 import game.Fruit;
 import game.Game;
+import game.Map;
 import game.Pacman;
 import geom.Point3D;
 
@@ -31,7 +32,7 @@ public class ShortestPath {
 		
 	}
 	
-	public ShortestPath(Game game, List<double[]> _path) {
+	public ShortestPath(Game game) {
 		tempList = new ArrayList<double[]>();
 		pacmanLst = new ArrayList<Pacman>();
 		fruitLst = new ArrayList<Fruit>();
@@ -44,11 +45,12 @@ public class ShortestPath {
 	}
 
 	public void pathSimulation() {
-		while (fruitLst != null) {
+		while (fruitLst.size()>0) {
 			chkDistanceFruits();
 			//path.add(tempList.get(0));
 			insertToPacmanPath(findPointsOfObjects());
 			fixPacmanPointAndRemoveFruit();
+			tempList.clear();
 		}
 	}
 
@@ -58,8 +60,8 @@ public class ShortestPath {
 			if(pac.getId()==(int)tempList.get(0)[0])
 				element[0]=pac;
 		for(Fruit fru:fruitLst)
-			if(fru.getId()==(int)tempList.get(0)[0])
-				element[0]=fru;			
+			if(fru.getId()==(int)tempList.get(0)[1])
+				element[1]=fru;			
 		return element;
 	}
 
@@ -117,18 +119,23 @@ public class ShortestPath {
 
 	// check for every fruit who's the nearest pacman to him
 	public void chkDistanceFruits() {
-		double[] arr = new double[3];
+		Map map=new Map();
 		double closeFruit = 0, maxcloseFruit;
 		for (Fruit fruit : fruitLst) {
-			maxcloseFruit = 0;
+			double[] arr = new double[3];
+			maxcloseFruit =  Integer.MAX_VALUE;;
 			for (Pacman pacman : pacmanLst) {
-				closeFruit = (pacman.getPoint().distance3D(fruit.getPoint()) - pacman.getAttribute()[1])/ pacman.getAttribute()[0];
+				closeFruit = pacman.getmeterSum()+(map.polar2Pixel(pacman.getPoint()).distance3D(map.polar2Pixel(fruit.getPoint())) - pacman.getAttribute()[1])/ pacman.getAttribute()[0];
 				if (closeFruit < 0)
 					closeFruit = 0;
-				if (closeFruit > maxcloseFruit) {
+				if (closeFruit < maxcloseFruit) {
 					maxcloseFruit = closeFruit;
 					arr[0] = pacman.getId();
 				}
+			}
+			for (Pacman pacman : pacmanLst) {
+				if (pacman.getId() == arr[0]) 
+					pacman.setMeterSum(maxcloseFruit);
 			}
 			arr[1] = fruit.getId();
 			arr[2] = maxcloseFruit;
@@ -140,14 +147,15 @@ public class ShortestPath {
 	// save tempList sorted
 	private void addItem(double[] arr) {
 		int index = 0, pos = 0;
-		boolean contionue = true;
+		boolean con = true;
 		for (double[] d : tempList) {
-			if (arr[3] < d[3] && contionue) {
+			if (arr[2] < d[2] && con) {
 				pos = index;
-				contionue = false;
+				con = false;
 			}
 			index += 1;
 		}
+		if (con)pos=index;
 		tempList.add(pos, arr);
 	}
 
