@@ -3,9 +3,11 @@ package algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.ElementGame;
 import game.Fruit;
 import game.Game;
 import game.Pacman;
+import geom.Point3D;
 
 public class ShortestPath {
 
@@ -13,6 +15,8 @@ public class ShortestPath {
 	private List<double[]> path;
 	private List<Pacman> pacmanLst;
 	private List<Fruit> fruitLst;
+	private List<Pacman> pacmanListOrg;
+	private List<Fruit> fruitListOrg;
 
 	public ShortestPath(List<Pacman> packman, List<Fruit> fruit, List<double[]> _path) {
 		tempList = new ArrayList<double[]>();
@@ -20,8 +24,10 @@ public class ShortestPath {
 		fruitLst = new ArrayList<Fruit>();
 		deepCopyPacman(packman);
 		deepCopyFruit(fruit);
-		path = new ArrayList<double[]>();
-		path = _path;
+		pacmanListOrg=packman;
+		fruitListOrg=fruit;
+		//path = new ArrayList<double[]>();
+		//path = _path;
 		
 	}
 	
@@ -31,15 +37,41 @@ public class ShortestPath {
 		fruitLst = new ArrayList<Fruit>();
 		deepCopyPacman(game.getPacman());
 		deepCopyFruit(game.getFruit());
-		path = new ArrayList<double[]>();
-		path = _path;
+		pacmanListOrg=game.getPacman();
+		fruitListOrg=game.getFruit();
+		//path = new ArrayList<double[]>();
+		//path = _path;
 	}
 
 	public void pathSimulation() {
 		while (fruitLst != null) {
 			chkDistanceFruits();
-			path.add(tempList.get(0));
+			//path.add(tempList.get(0));
+			insertToPacmanPath(findPointsOfObjects());
 			fixPacmanPointAndRemoveFruit();
+		}
+	}
+
+	private ElementGame[] findPointsOfObjects() {
+		ElementGame[] element=new ElementGame[2];
+		for(Pacman pac:pacmanLst)
+			if(pac.getId()==(int)tempList.get(0)[0])
+				element[0]=pac;
+		for(Fruit fru:fruitLst)
+			if(fru.getId()==(int)tempList.get(0)[0])
+				element[0]=fru;			
+		return element;
+	}
+
+	private void insertToPacmanPath(ElementGame[] element) {
+		int id=(int) element[0].getId();
+		for(Pacman pacman:pacmanListOrg) {
+			if(pacman.getId()==id) {
+				Point3D pStart=new Point3D(element[0].getPoint());
+				Point3D pEnd=new Point3D(element[1].getPoint());
+				Point3D[] points= {pStart,pEnd};
+				pacman.addPath(points);
+			}
 		}
 	}
 
@@ -86,18 +118,20 @@ public class ShortestPath {
 	// check for every fruit who's the nearest pacman to him
 	public void chkDistanceFruits() {
 		double[] arr = new double[3];
-		double distance = 0, maxDistance;
+		double closeFruit = 0, maxcloseFruit;
 		for (Fruit fruit : fruitLst) {
-			maxDistance = 0;
+			maxcloseFruit = 0;
 			for (Pacman pacman : pacmanLst) {
-				distance = pacman.getPoint().distance3D(fruit.getPoint());
-				if (distance > maxDistance) {
-					maxDistance = distance;
+				closeFruit = (pacman.getPoint().distance3D(fruit.getPoint()) - pacman.getAttribute()[1])/ pacman.getAttribute()[0];
+				if (closeFruit < 0)
+					closeFruit = 0;
+				if (closeFruit > maxcloseFruit) {
+					maxcloseFruit = closeFruit;
 					arr[0] = pacman.getId();
 				}
 			}
 			arr[1] = fruit.getId();
-			arr[2] = maxDistance;
+			arr[2] = maxcloseFruit;
 			addItem(arr);
 		}
 	}

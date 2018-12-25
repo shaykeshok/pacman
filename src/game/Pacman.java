@@ -1,5 +1,8 @@
 package game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import geom.Point3D;
 
 public class Pacman implements ElementGame {
@@ -10,6 +13,7 @@ public class Pacman implements ElementGame {
 	private Object orientation;
 	private final static String ICON="icons\\pacman.png";
 	private double color;
+	private List<Point3D[]> pathPacman;
 	
 	public Pacman(int _id,Point3D _startPoint,int _speed,int _radius,Object _orientation) {
 		id=_id;
@@ -17,6 +21,7 @@ public class Pacman implements ElementGame {
 		speed=_speed;
 		radius=_radius;
 		orientation=_orientation;
+		pathPacman=new ArrayList<Point3D[]>();
 	}
 	
 	/*****************************Getters****************************/
@@ -48,6 +53,10 @@ public class Pacman implements ElementGame {
 	@Override
 	public String toString() {
 		return "p,"+id + "," + mikum.x()+","+mikum.y()+","+mikum.z() + "," + speed + "," + radius;
+	}
+
+	public void addPath(Point3D[] points) {		
+		pathPacman.add(points);
 	}
 
 	
