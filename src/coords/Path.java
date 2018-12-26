@@ -10,15 +10,31 @@ import geom.Point3D;
 public class Path {
 	private List<Object[]> path;
 
+	/**
+	 * Create Path object
+	 */
 	public Path() {
 		path = new ArrayList<Object[]>();
 	}
 
+	/**
+	 * This method add data path to path
+	 * @param _time to add
+	 * @param _point to add
+	 * @param _objectId to add
+	 * @param _element to add
+	 */
 	private void add(long _time, Point3D _point, int _objectId, ElementGame _element) {
 		Object[] arr = { _time, _point, _objectId, _element };
 		path.add(arr);
 	}
 
+	/**
+	 * This method calculate the path by given time of given packman 
+	 * @param pacman for path
+	 * @param time for path
+	 * @return the path of given packman
+	 */
 	public List<Object[]> pathSofi(Pacman pacman,long time) {
 		List<Point3D[]> lstPoints=pacman.getPath();
 		for (Point3D[] points : lstPoints) {

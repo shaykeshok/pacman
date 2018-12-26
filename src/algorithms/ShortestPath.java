@@ -15,10 +15,10 @@ public class ShortestPath {
 	private List<Fruit> fruitLst;
 
 	/**
-	 * 
-	 * @param packman
-	 * @param fruit
-	 * @param _path
+	 * Create ShortestPath object to given packman
+	 * @param packman for shortest path
+	 * @param fruit list of destination that packman needs pass  
+	 * @param _path for shortest path
 	 */
 	public ShortestPath(List<Pacman> packman, List<Fruit> fruit, List<double[]> _path) {
 		tempList = new ArrayList<double[]>();
@@ -32,9 +32,9 @@ public class ShortestPath {
 	}
 	
 	/**
-	 * 
-	 * @param game
-	 * @param _path
+	 * Create ShortestPath object to given game
+	 * @param game for shortest path
+	 * @param _path for shortest path
 	 */
 	public ShortestPath(Game game, List<double[]> _path) {
 		tempList = new ArrayList<double[]>();
@@ -47,7 +47,7 @@ public class ShortestPath {
 	}
 
 	/**
-	 * 
+	 * This method move the pacmen to tne neart=st location
 	 */
 	public void pathSimulation() {
 		while (fruitLst != null) {
@@ -123,8 +123,8 @@ public class ShortestPath {
 	}
 
 	/**
-	 * This method add item to the right position
-	 * @param arr 
+	 * This method add item to the first position
+	 * @param arr to add
 	 */
 
 	private void addItem(double[] arr) {

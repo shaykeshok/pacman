@@ -46,6 +46,10 @@ public class MainWindow extends JFrame implements MouseListener {
 	private List<Object[]> pathSofi;
 	private Map map;
 
+
+	/**
+	 * Create MainWindow object for GUI
+	 */
 	public MainWindow() {
 		pathSofi = new ArrayList<Object[]>();
 		game = new Game();
@@ -63,6 +67,9 @@ public class MainWindow extends JFrame implements MouseListener {
 		createActions();
 	}
 
+	/**
+	 * This method initialized the GUI arguments 
+	 */
 	private void initGUI() {
 		// set file menu
 		menuBar = new MenuBar();
@@ -113,52 +120,55 @@ public class MainWindow extends JFrame implements MouseListener {
 	private boolean startGame=false;
 	private long time;
 
+	/**
+	 * This method manage the graphic presentation
+	 */
 	public void paint(Graphics g) {
 		g.drawImage(map.getImg(), 0, 0, this);
 		ImageObserver observer = null;
 		if(startGame==false) {
-		if (simulator == false) {
-			if (x != -1 && y != -1) {
-				int r = 30;
-				x = x - (r / 2);
-				y = y - (r / 2);
+			if (simulator == false) {
+				if (x != -1 && y != -1) {
+					int r = 30;
+					x = x - (r / 2);
+					y = y - (r / 2);
 
-				if (icon == pacman)
-					game.add(new Pacman(game.getBigIdPacman() + 1, map.pixel2Polar(x, y), 1, 1, null));
-				else
-					game.add(new Fruit(game.getBigIdFruit() + 1, map.pixel2Polar(x, y), 1));
-			}
-			for (Pacman pacmanO : game.getPacman()) {
-				icon = pacman;
-				Point3D pix = map.polar2Pixel(pacmanO.getPoint());
-				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-			}
-			for (Fruit fruitO : game.getFruit()) {
-				icon = fruit;
-				Point3D pix = map.polar2Pixel(fruitO.getPoint());
-				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-			}
-		} else {
-			for (Pacman pacmanO : game.getPacman()) {
-				icon = pacman;
-				Point3D pix = map.polar2Pixel(pacmanO.getPoint());
-				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-				g.setColor(new Color(((int) (Math.random() * (256))), (int) (Math.random() * (256)),
-						(int) (Math.random() * (256))));
-				List<Point3D[]> points = pacmanO.getPath();
-				for (Point3D[] line : points) {
-					Point3D start = map.polar2Pixel(line[0]);
-					Point3D end = map.polar2Pixel(line[1]);
-					g.drawLine((int) start.x(), (int) start.y(), (int) end.x(), (int) end.y());
+					if (icon == pacman)
+						game.add(new Pacman(game.getBigIdPacman() + 1, map.pixel2Polar(x, y), 1, 1, null));
+					else
+						game.add(new Fruit(game.getBigIdFruit() + 1, map.pixel2Polar(x, y), 1));
 				}
+				for (Pacman pacmanO : game.getPacman()) {
+					icon = pacman;
+					Point3D pix = map.polar2Pixel(pacmanO.getPoint());
+					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				}
+				for (Fruit fruitO : game.getFruit()) {
+					icon = fruit;
+					Point3D pix = map.polar2Pixel(fruitO.getPoint());
+					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				}
+			} else {
+				for (Pacman pacmanO : game.getPacman()) {
+					icon = pacman;
+					Point3D pix = map.polar2Pixel(pacmanO.getPoint());
+					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+					g.setColor(new Color(((int) (Math.random() * (256))), (int) (Math.random() * (256)),
+							(int) (Math.random() * (256))));
+					List<Point3D[]> points = pacmanO.getPath();
+					for (Point3D[] line : points) {
+						Point3D start = map.polar2Pixel(line[0]);
+						Point3D end = map.polar2Pixel(line[1]);
+						g.drawLine((int) start.x(), (int) start.y(), (int) end.x(), (int) end.y());
+					}
+				}
+				for (Fruit fruitO : game.getFruit()) {
+					icon = fruit;
+					Point3D pix = map.polar2Pixel(fruitO.getPoint());
+					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+				}
+				simulator = false;
 			}
-			for (Fruit fruitO : game.getFruit()) {
-				icon = fruit;
-				Point3D pix = map.polar2Pixel(fruitO.getPoint());
-				g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
-			}
-			simulator = false;
-		}
 		}else {
 			for (Object[] objects : pathSofi) {
 				if((long)objects[0]==time) {
@@ -177,6 +187,12 @@ public class MainWindow extends JFrame implements MouseListener {
 			startGame=false;
 		}
 	}
+
+
+
+	/**
+	 * Class for compare times 
+	 */
 	class TimeComperator implements Comparator<Object[]> {
 
 		@Override
@@ -184,6 +200,8 @@ public class MainWindow extends JFrame implements MouseListener {
 			return (int) ((long)o1[0] - (long)o2[0]);
 		}
 	}
+
+
 	@Override
 	public void mouseClicked(MouseEvent arg) {
 		if (!stop) {
@@ -195,6 +213,9 @@ public class MainWindow extends JFrame implements MouseListener {
 		}
 	}
 
+	/**
+	 * This method create action listener of all the operations
+	 */
 	public void createActions() {
 		pacmanItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -252,8 +273,6 @@ public class MainWindow extends JFrame implements MouseListener {
 		});
 
 		playGameItem.addActionListener(new ActionListener() {
-			
-
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("start game..");
 				simulator = true;
@@ -282,6 +301,10 @@ public class MainWindow extends JFrame implements MouseListener {
 		});
 	}
 
+	/**
+	 * This method read loaded csv file
+	 * @throws FileNotFoundException if the file not found or not exist
+	 */
 	public void readFileDialog() throws FileNotFoundException {
 		// try read from the file
 
@@ -308,6 +331,9 @@ public class MainWindow extends JFrame implements MouseListener {
 		}
 	}
 
+	/**
+	 * This method write csv file
+	 */
 	public void writeFileDialog() {
 		// try write to the file
 		FileDialog fd = new FileDialog(this, "Save the game", FileDialog.SAVE);

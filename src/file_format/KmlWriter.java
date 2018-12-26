@@ -43,7 +43,7 @@ public class KmlWriter {
 
 	/**
 	 * Add a placemark to this KML object.
-	 * @param mark
+	 * @param projectCSV to placemark
 	 */
 	public void addMarksFromList(GIS_project projectCSV) {
 		if (projectCSV.isEmpty())
