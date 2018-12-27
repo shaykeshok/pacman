@@ -124,7 +124,12 @@ public class MainWindow extends JFrame implements MouseListener {
 	 * This method manage the graphic presentation
 	 */
 	public void paint(Graphics g) {
-		g.drawImage(map.getImg(), 0, 0, this);
+		int width = this.getContentPane().getWidth();
+		int height = this.getContentPane().getHeight();
+		int offsetWidth = 10;
+		int offsetHeight = 65;
+		map.setSize(width, height);
+		g.drawImage(map.getImg(), offsetWidth, offsetHeight, width, height, this);
 		ImageObserver observer = null;
 		if(startGame==false) {
 			if (simulator == false) {
@@ -141,12 +146,12 @@ public class MainWindow extends JFrame implements MouseListener {
 				for (Pacman pacmanO : game.getPacman()) {
 					icon = pacman;
 					Point3D pix = map.polar2Pixel(pacmanO.getPoint());
-					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+					g.drawImage(icon, offsetWidth + (int) pix.x(), offsetHeight + (int) pix.y(), 30, 30, observer);
 				}
 				for (Fruit fruitO : game.getFruit()) {
 					icon = fruit;
 					Point3D pix = map.polar2Pixel(fruitO.getPoint());
-					g.drawImage(icon, (int) pix.x(), (int) pix.y(), 30, 30, observer);
+					g.drawImage(icon, offsetWidth + (int) pix.x(), offsetHeight + (int) pix.y(), 30, 30, observer);
 				}
 			} else {
 				for (Pacman pacmanO : game.getPacman()) {

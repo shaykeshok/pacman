@@ -20,14 +20,14 @@ public class Map {
 	private double min_x = 35.202350;
 	private double min_y = 32.101900;
 
-	private double pixel_per_radian_x ;
-	private double pixel_per_radian_y ;
+	//private double pixel_per_radian_x ;
+	// double pixel_per_radian_y ;
 
 
 	private double width_map_in_meters = 943;
 	private double height_map_in_meters = 427;
-	private double pixel_per_meter_x;
-	private double pixel_per_meter_y;
+	//private double pixel_per_meter_x;
+	//private double pixel_per_meter_y;
 
 
 	private BufferedImage mapImage;
@@ -49,18 +49,12 @@ public class Map {
 			e.printStackTrace();
 		}
 		myCoords = new MyCoords();
-		pixel_per_radian_x = mapWidth/(max_x-min_x);
-		pixel_per_radian_y = mapHeight/(max_y-min_y);
-
-
-		pixel_per_meter_x = mapWidth/width_map_in_meters;
-		pixel_per_meter_y = mapHeight/height_map_in_meters;
 	}
 
 	/**
-     * Create Map object by given string path to map image
-     * @param _picPath path of image
-     */
+	 * Create Map object by given string path to map image
+	 * @param _picPath path of image
+	 */
 	public Map(String _picPath) {
 		leftCornerUp = new Point3D( 32.105394,  35.202532, 0);
 		rightCornerUp = new Point3D( 32.105444,  35.212496, 0);
@@ -68,7 +62,7 @@ public class Map {
 		rightCornerDown = new Point3D( 32.101899,  35.212496, 0);
 		picPath=_picPath;
 	}
-	
+
 	/**
 	 * Create Map object by
 	 * @param _rightCornerUp limit of the map
@@ -96,22 +90,24 @@ public class Map {
 		MyCoords coords = new MyCoords();
 		Point3D vector = coords.vector3D(src, dst);
 		double d =  Math.sqrt(Math.pow(vector.x(), 2) + Math.pow(vector.y(), 2) + Math.pow(vector.z(), 2));
-		double dx = vector.x()*pixel_per_meter_x;
-		double dy = vector.y()*pixel_per_meter_y;
+		double dx = vector.x()*pixelPerMeterX();
+		double dy = vector.y()*pixelPerMeterY();
 		int distance = (int)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(vector.z(), 2));
 		return distance;
 	}
 
 
+	
 	/**
 	 * This method convert pixels point to polar point
-	 * @param point to convert
+	 * @param x to convert
+	 * @param y to convert
 	 * @return the given point in polar
 	 */
 	public Point3D pixel2Polar(int x,int y) {
 
-		double xNew = ((x/pixel_per_radian_x) + min_x);
-		double yNew = max_y - (y / pixel_per_radian_y);
+		double xNew = ((x/pixelPerRadianX()) + min_x);
+		double yNew = max_y - (y / pixelPerRadianY());
 		return new Point3D(xNew,yNew);
 
 
@@ -123,8 +119,8 @@ public class Map {
 	 * @return the given point in pixels
 	 */
 	public Point3D polar2Pixel(Point3D point) {
-		double x = Math.abs(point.x() - min_x) * pixel_per_radian_x;
-		double y = Math.abs(max_y - point.y()) * pixel_per_radian_y;
+		double x = Math.abs(point.x() - min_x) * pixelPerRadianX();
+		double y = Math.abs(max_y - point.y()) * pixelPerRadianY();
 		return new Point3D(roundNumber(x), roundNumber(y), point.z());
 	}
 
@@ -189,11 +185,45 @@ public class Map {
 		angle = Math.toDegrees(Math.atan2(deltaX, deltaY));
 		return (angle < 0)? angle+360 : angle;
 	}
-	/*
-	public static void main(String[] args) {
-		Point3D p=new Point3D(35.2035022,32.1045513,10);
-		Map map=new Map();
-		System.out.println(map.polar2Pixel(p));
-	}
+
+	/**
+	 * This method set a new width and height to the map;
+	 * @param width to set
+	 * @param height to set
 	 */
+	public void setSize(int width, int height) {
+		if (width > 0 && height > 0) {
+			mapWidth = width;
+			mapHeight = height;
+		}
+	}
+	/**
+	 * This method compute pixel per radian by size image;
+	 * @return pixel per radian x
+	 */
+	private double pixelPerRadianX() {
+		return mapWidth/(max_x-min_x);
+	}
+	/**
+	 * This method compute pixel per radian by size image;
+	 * @return pixel per radian y
+	 */
+	private double pixelPerRadianY() {
+		return mapHeight/(max_y-min_y);
+	}
+	/**
+	 * This method compute pixel per meter by size image;
+	 * @return pixel per meter y
+	 */
+	private double pixelPerMeterX() {
+		return mapWidth/width_map_in_meters;
+	}
+	/**
+	 * This method compute pixel per meter by size image;
+	 * @return pixel per meter y
+	 */
+	private double pixelPerMeterY() {
+		return mapHeight/height_map_in_meters;
+	}
+	
 }
